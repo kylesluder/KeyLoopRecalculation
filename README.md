@@ -13,26 +13,26 @@ Sadly, there is apparently no way for a tab view whose initial item is selected 
 
 One possible solution (untested) would be to, immediately after assigning the view to the tab view item, delay-perform a message that first sets the tab view item's initial first responder and then rebuilds its key view loop:
 
-// note: untested
-@property IBOutlet NSView *viewToSwapIn;
-@property IBOutlet NSView *swappedInSubviewA, *swappedInSubviewB;
+    // note: untested
+    @property IBOutlet NSView *viewToSwapIn;
+    @property IBOutlet NSView *swappedInSubviewA, *swappedInSubviewB;
 
-- (void)windowDidLoad {
-  _tabViewItem.view = _viewToSwapIn;
-  [self performSelector:@selector(_rebuildKeyViewLoopForTabItem:) withObject:_firstTabItem afterDelay:0];
-}
+    - (void)windowDidLoad {
+      _tabViewItem.view = _viewToSwapIn;
+      [self performSelector:@selector(_rebuildKeyViewLoopForTabItem:) withObject:_firstTabItem afterDelay:0];
+    }
 
-- (void)_rebuildKeyViewLoopForTabItem:(NSTabViewItem *)item
-{
-  _swappedInSubviewA.nextKeyView = _swappedInSubviewB;
+    - (void)_rebuildKeyViewLoopForTabItem:(NSTabViewItem *)item
+    {
+      _swappedInSubviewA.nextKeyView = _swappedInSubviewB;
 
-  if (item == _tabView.selectedTabViewItem) {
-    _swappedInSubviewB.nextKeyView = _tabView;
-    _tabView.nextKeyView = _swappedInSubviewA;
-  } else {
-    _swappedInSubviewB.nextKeyView = _swappedInSubviewA;
-  }
+      if (item == _tabView.selectedTabViewItem) {
+        _swappedInSubviewB.nextKeyView = _tabView;
+        _tabView.nextKeyView = _swappedInSubviewA;
+      } else {
+        _swappedInSubviewB.nextKeyView = _swappedInSubviewA;
+      }
 
-  item.initialFirstResponder = _swappedInSubviewA;
-}
-//end
+      item.initialFirstResponder = _swappedInSubviewA;
+    }
+    //end
